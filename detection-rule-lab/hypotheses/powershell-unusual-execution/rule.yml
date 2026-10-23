@@ -1,0 +1,85 @@
+title: Unusual PowerShell Execution - Hidden Encoded Command, Download Cradle, or Office/Script-Host Parent
+id: 6f3c2a8e-5b1d-4e7a-9c4f-2d8b7e1a0c53
+status: experimental
+description: |
+  Detects PowerShell (powershell.exe / pwsh.exe, including renamed copies) started in one of three
+  combinations that are rare in normal administration but common in initial-access and
+  living-off-the-land tradecraft:
+    A) an encoded command (-EncodedCommand and its abbreviations) together with a hidden window,
+    B) a download primitive together with in-memory execution (IEX / Invoke-Expression),
+    C) any of the above building blocks when the parent is an Office application, a script host,
+       mshta, or a web/database server worker.
+references:
+  - https://attack.mitre.org/techniques/T1059/001/
+  - https://attack.mitre.org/techniques/T1027/010/
+  - https://attack.mitre.org/techniques/T1564/003/
+  - https://attack.mitre.org/techniques/T1105/
+  - https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_powershell_exe?view=powershell-5.1
+  - https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pwsh
+  - https://redcanary.com/threat-detection-report/techniques/powershell/
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_powershell_encode.yml
+author: Yesha Patel
+date: 2026-10-23
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.defense-evasion
+  - attack.t1027.010
+  - attack.t1564.003
+  - attack.command-and-control
+  - attack.t1105
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith:
+        - '\powershell.exe'
+        - '\pwsh.exe'
+    - OriginalFileName:
+        - 'PowerShell.EXE'
+        - 'pwsh.dll'
+  # -e, -ec, -en, -enc, ... -EncodedCommand followed by whitespace. Written as a regex so that
+  # -Encoding (Get-Content / Out-File) and -ExecutionPolicy (-ex / -ep) do not match.
+  pattern_a_encoded:
+    CommandLine|re|i: '\s[-/\u2013\u2014\u2015]e(c|n(c(o(d(e(d(c(o(m(m(a(n(d)?)?)?)?)?)?)?)?)?)?)?)?)?\s'
+  # -w / -win / ... -WindowStyle followed by Hidden (or a prefix of it) or its numeric value 1.
+  pattern_a_hidden:
+    CommandLine|re|i: '\s[-/\u2013\u2014\u2015]w(i(n(d(o(w(s(t(y(l(e)?)?)?)?)?)?)?)?)?)?\s+[''"]?(h(i(d(d(e(n)?)?)?)?)?|1)\b'
+  pattern_b_download:
+    CommandLine|contains:
+      - '.DownloadString('
+      - '.DownloadFile('
+      - '.DownloadData('
+      - 'Net.WebClient'
+      - 'Invoke-WebRequest'
+      - 'Invoke-RestMethod'
+      - 'Start-BitsTransfer'
+      - 'iwr '
+      - 'irm '
+  pattern_b_exec:
+    CommandLine|contains:
+      - 'IEX'
+      - 'Invoke-Expression'
+  selection_parent:
+    ParentImage|endswith:
+      - '\winword.exe'
+      - '\excel.exe'
+      - '\powerpnt.exe'
+      - '\outlook.exe'
+      - '\onenote.exe'
+      - '\mshta.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+      - '\w3wp.exe'
+      - '\sqlservr.exe'
+  filter_optional_azure_guest_configuration:
+    ParentImage|startswith: 'C:\Packages\Plugins\Microsoft.GuestConfiguration.ConfigurationforWindows\'
+  condition: >-
+    selection_img and (all of pattern_a_* or all of pattern_b_* or (selection_parent and 1 of pattern_*))
+    and not 1 of filter_optional_*
+falsepositives:
+  - Software installers and bootstrap one-liners that download and run a script (Chocolatey, Scoop, some vendor agents)
+  - Management agents (SCCM/Intune scripts, RMM tools) that push hidden, encoded commands
+  - Office add-ins or macros that legitimately shell out to PowerShell
+level: high
