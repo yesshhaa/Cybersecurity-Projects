@@ -1,0 +1,2 @@
+Set-Cookie: access_token=eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMDAxIiwidXNlcm5hbWUiOiJqYW5lIiwicm9sZSI6InVzZXIifQ.; Path=/; Secure; SameSite=Lax
+Set-Cookie: auth=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MiIsImVtYWlsIjoiamFuZUBleGFtcGxlLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyOTcwMDAwMH0.pYJ0mGqBf7jC6M0X6tJ2eN8K4q1Z9sVwR3xLh5dUoAs; Path=/; Secure

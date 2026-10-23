@@ -1,0 +1,12 @@
+{
+  "name": "cookie-session-analyzer",
+  "version": "1.0.0",
+  "description": "Audit cookies and session tokens against OWASP Session Management guidance",
+  "main": "analyzer.js",
+  "bin": { "cookie-analyzer": "cli.js" },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": { "node": ">=18.14" },
+  "license": "MIT"
+}

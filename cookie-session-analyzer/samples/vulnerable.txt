@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Set-Cookie: PHPSESSID=1048576; Path=/
+Set-Cookie: user_role=YWRtaW4=; Path=/; Expires=Fri, 31 Dec 2032 23:59:59 GMT
+Set-Cookie: profile=eyJ1c2VyX2lkIjogNDIsICJlbWFpbCI6ICJqYW5lQGV4YW1wbGUuY29tIiwgImlzX2FkbWluIjogZmFsc2V9; Domain=.example.com; Path=/
+Set-Cookie: remember_token=1729700000; Max-Age=315360000; Path=/
+Set-Cookie: ab_test=variant-b; SameSite=None

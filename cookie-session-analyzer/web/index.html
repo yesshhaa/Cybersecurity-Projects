@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Cookie & Session Analyzer — audit Set-Cookie headers and session tokens for security flags, entropy, JWT weaknesses and tampering risk. Runs 100% in your browser." />
+  <title>Cookie &amp; Session Analyzer · YP.SEC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="analyzer.css" />
+</head>
+
+<body>
+
+  <header class="top">
+    <a href="https://yesshhaa.github.io" class="logo">YP<span class="accent">.SEC</span></a>
+    <a href="https://github.com/yesshhaa/Cybersecurity-Projects/tree/main/cookie-session-analyzer" class="back">Source on GitHub</a>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div class="tag">Cybersecurity Projects · Web Session Security</div>
+      <h1>Cookie &amp; Session <span class="accent">Analyzer</span></h1>
+      <p>Paste raw HTTP response headers, <code>Set-Cookie</code> lines, a <code>Cookie:</code> request header, or a
+        JSON cookie export. The analyzer audits every cookie against OWASP Session Management guidance — security
+        flags, prefix rules, token entropy, JWT weaknesses, tamperable client-side state — then grades the
+        configuration and writes the hardened headers for you.</p>
+      <p class="privacy">🔒 Everything runs locally in your browser. No cookie, token or header ever leaves this page.</p>
+    </section>
+
+    <section class="panel input-panel">
+      <div class="panel-head">
+        <label for="input">Input</label>
+        <div class="samples">
+          <span>Load sample:</span>
+          <button type="button" data-sample="vulnerable">Vulnerable app</button>
+          <button type="button" data-sample="jwt">JWT auth</button>
+          <button type="button" data-sample="hardened">Hardened app</button>
+          <button type="button" data-sample="json">JSON export</button>
+        </div>
+      </div>
+      <textarea id="input" spellcheck="false" placeholder="HTTP/1.1 200 OK
+Set-Cookie: sessionid=12345; Path=/
+Set-Cookie: __Host-sid=Xk2...; Path=/; Secure; HttpOnly; SameSite=Lax"></textarea>
+      <div class="actions">
+        <button type="button" id="analyze" class="primary">Analyze</button>
+        <button type="button" id="clear">Clear</button>
+        <span class="hint">Tip: on a site you own, run <code>copy(document.cookie)</code> in DevTools and paste it here —
+          any session token it returns is already readable by an XSS payload.</span>
+      </div>
+    </section>
+
+    <section id="results" hidden>
+      <div class="summary panel">
+        <div class="grade" id="grade">–</div>
+        <div class="summary-body">
+          <h2 id="verdict">–</h2>
+          <p id="verdict-sub"></p>
+          <div class="counts" id="counts"></div>
+        </div>
+        <div class="summary-actions">
+          <button type="button" id="export-json">Export JSON report</button>
+          <button type="button" id="export-md">Export Markdown report</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Hardened headers</h3>
+          <button type="button" id="copy-fixed">Copy</button>
+        </div>
+        <pre id="fixed" class="code"></pre>
+      </div>
+
+      <div id="cookies"></div>
+    </section>
+
+    <section class="panel method">
+      <h3>What it checks</h3>
+      <div class="checks">
+        <div><b>Transport &amp; script access</b><span>Missing <code>Secure</code> / <code>HttpOnly</code> on session
+            cookies, <code>SameSite=None</code> without <code>Secure</code>, missing <code>SameSite</code> (CSRF).</span></div>
+        <div><b>Scope</b><span>Over-broad <code>Domain</code> (sibling-subdomain exposure), <code>__Host-</code> /
+            <code>__Secure-</code> prefix violations browsers silently reject.</span></div>
+        <div><b>Lifetime</b><span>Persistent session tokens, multi-year expiry, already-expired cookies.</span></div>
+        <div><b>Token strength</b><span>Estimated entropy vs. OWASP's 64-bit minimum, numeric / sequential IDs,
+            Unix-timestamp IDs, low character diversity.</span></div>
+        <div><b>JWT</b><span>Decodes header &amp; payload: <code>alg: none</code>, missing / long <code>exp</code>,
+            sensitive claims, JWT stored where JavaScript can read it.</span></div>
+        <div><b>Client-side state</b><span>Base64 / URL-encoded / JSON values exposing roles, user IDs, admin flags or
+            PII that a user could edit and replay.</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2026 Yesha Patel · <a href="https://github.com/yesshhaa">github.com/yesshhaa</a></footer>
+
+  <script src="../analyzer.js"></script>
+</body>
+
+</html>

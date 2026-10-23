@@ -1,0 +1,4 @@
+HTTP/2 200
+set-cookie: __Host-sid=q8Rk3vZ1yT6pN0wLs2HbX9cFjEa4Gm7Ud5KiOrPeYQ0; Path=/; Secure; HttpOnly; SameSite=Lax
+set-cookie: __Host-csrf=Vw3nX0aZ8kQe2LtR5yHs9uB1; Path=/; Secure; SameSite=Strict
+set-cookie: theme=dark; Path=/; Secure; SameSite=Lax; Max-Age=31536000

@@ -1,0 +1,37 @@
+[
+  {
+    "domain": ".shop.example",
+    "hostOnly": false,
+    "name": "connect.sid",
+    "value": "s%3AaB3dE5fG7hJ.9kLmN0pQrS2tUvW4xYz6AbCdEfGhIjKlMnOpQrStUvWx",
+    "path": "/",
+    "secure": true,
+    "httpOnly": true,
+    "sameSite": "no_restriction",
+    "session": true
+  },
+  {
+    "domain": "shop.example",
+    "hostOnly": true,
+    "name": "cart",
+    "value": "eyJpdGVtcyI6WzEyLDQ0XSwidXNlcl9pZCI6NzcxfQ%3D%3D",
+    "path": "/",
+    "secure": false,
+    "httpOnly": false,
+    "sameSite": "unspecified",
+    "expirationDate": 1800000000,
+    "session": false
+  },
+  {
+    "domain": ".shop.example",
+    "hostOnly": false,
+    "name": "_ga",
+    "value": "GA1.1.1234567890.1729700000",
+    "path": "/",
+    "secure": false,
+    "httpOnly": false,
+    "sameSite": "lax",
+    "expirationDate": 1900000000,
+    "session": false
+  }
+]
