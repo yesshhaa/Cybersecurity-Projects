@@ -5,6 +5,8 @@ A tool that audits the cookies a web app sets: session-security flags, cookie sc
 **References:** OWASP Session Management Cheat Sheet · OWASP A01/A07 · RFC 6265bis · RFC 8725 (JWT BCP)
 **CWE coverage:** 614, 1004, 352, 330/331, 613, 565, 347, 312, 359
 
+![Cookie & Session Analyzer grading a vulnerable app F and generating hardened headers](screenshots/web-grade.png)
+
 ---
 
 ## Why this project
@@ -32,6 +34,50 @@ Scanners like Burp flag some of these. Building the checks myself meant understa
 
 Each cookie is sorted into **session**, **CSRF**, **tracking** or **other** first, so a missing `HttpOnly` on a session token is reported as high severity while the same thing on a `theme` cookie isn't flagged at all.
 
+## How it works: walkthrough
+
+### 1. Paste what the server sends
+
+Paste raw response headers (from DevTools → Network, Burp, or `curl -I`), `document.cookie` output, or a cookie export, or click a sample. Lines that aren't cookies, like `Content-Type`, are ignored.
+
+![Input panel with the vulnerable-app sample loaded](screenshots/web-input.png)
+
+### 2. Get an overall grade and the fixed headers
+
+Every cookie is scored out of 100 and the whole setup gets an A–F grade: any critical finding means F, any high finding caps it at C. Underneath, the tool writes a corrected `Set-Cookie` line for each cookie and notes what changed (new random token, `__Host-` rename, persistence removed). The report can be downloaded as JSON or Markdown (see the screenshot at the top of this page).
+
+### 3. See exactly what is wrong with each cookie
+
+Each finding comes with a severity, why it matters, how to fix it, and an OWASP/CWE reference. Here a 7-digit numeric session ID is flagged critical because an attacker can simply count through other users' sessions.
+
+![PHPSESSID findings: guessable numeric ID, missing Secure and HttpOnly](screenshots/web-findings.png)
+
+### 4. Decode what's hidden inside the value
+
+Base64, URL-encoded and JSON values are decoded automatically. `user_role=YWRtaW4=` turns out to be `admin` with no signature, so anyone can edit it and replay it.
+
+![user_role cookie decoded to "admin" and flagged as tamperable](screenshots/web-tamper.png)
+
+JWTs are split into header and payload. This one uses `alg: none`, meaning it's unsigned, so the claims can be forged:
+
+![JWT decoded showing alg none and missing exp](screenshots/web-jwt.png)
+
+### 5. Confirm the fix
+
+Run the hardened headers back through the tool and they come out clean:
+
+![Hardened sample graded A 100/100](screenshots/web-hardened.png)
+
+### Command line: live sites and CI
+
+The CLI runs the same checks on a real site. Below, it audits **github.com** live:
+
+![CLI auditing github.com live, grade A](screenshots/cli-live.png)
+
+With `--fail-on`, it blocks a deploy when a cookie regresses:
+
+![CLI used as a CI gate: hardened passes, vulnerable exits 1](screenshots/cli-ci.png)
+
 ## Project structure
 
 ```
@@ -42,6 +88,7 @@ cookie-session-analyzer/
 │   ├── index.html       # browser front end, runs 100% client-side
 │   └── analyzer.css
 ├── samples/             # vulnerable, JWT, hardened and browser-export inputs
+├── screenshots/         # images used in this README
 ├── test/analyzer.test.js
 └── package.json
 ```
@@ -90,34 +137,9 @@ Nothing leaves the browser. Results can be exported as JSON or Markdown.
 
 ## Sample output
 
-```
-$ node cli.js samples/vulnerable.txt
+Full CLI report for `samples/vulnerable.txt`:
 
-■ PHPSESSID  session · 10/100
-  [CRITICAL] Sequential / guessable numeric session ID
-             → Generate session IDs from a CSPRNG with ≥ 128 bits of randomness.
-  [HIGH]     Missing Secure flag on session cookie
-  [HIGH]     Missing HttpOnly flag on session cookie
-  [MEDIUM]   SameSite attribute not set
-  [INFO]     No cookie prefix
-
-■ user_role  other · 68/100
-  [HIGH]     Tamperable client-side authorization data      ← YWRtaW4= decodes to "admin"
-  ...
-
-■ remember_token  session · 0/100
-  [CRITICAL] Session ID is a Unix timestamp                 ← decodes to 2024-10-23T16:13:20Z
-  [MEDIUM]   Long-lived persistent session (10.0 years)
-  ...
-
-Hardened headers
-  # PHPSESSID: value regenerated (256-bit CSPRNG) — map it to session state server-side
-  # PHPSESSID: renamed with __Host- prefix — update the name in application code
-  Set-Cookie: __Host-PHPSESSID=SaPesiuDZ7IrFE8U-HbQERdTwxXMnjpPtXxeY34Mgxg; Path=/; Secure; HttpOnly; SameSite=Lax
-  ...
-
-Grade: F (15/100) — 5 cookie(s) — 2 critical, 7 high, 4 medium, 7 low, 2 info
-```
+![Full CLI report for the vulnerable sample](screenshots/cli-vulnerable.png)
 
 Results across the bundled samples:
 
