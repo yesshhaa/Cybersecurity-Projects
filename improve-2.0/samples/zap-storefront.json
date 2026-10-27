@@ -1,0 +1,45 @@
+{
+  "@programName": "ZAP",
+  "@version": "2.15.0",
+  "@generated": "Mon, 21 Oct 2026 14:02:11",
+  "site": [
+    {
+      "@name": "https://shop.example.com",
+      "@host": "shop.example.com",
+      "@port": "443",
+      "@ssl": "true",
+      "alerts": [
+        { "pluginid": "40018", "alert": "SQL Injection", "name": "SQL Injection", "riskcode": "3", "confidence": "2", "riskdesc": "High (Medium)",
+          "desc": "<p>SQL injection may be possible.</p>", "solution": "<p>Do not trust client side input. Use prepared statements.</p>", "cweid": "89", "wascid": "19",
+          "instances": [ { "uri": "https://shop.example.com/products?category=1", "method": "GET", "param": "category", "attack": "1' OR '1'='1" } ] },
+        { "pluginid": "40012", "alert": "Cross Site Scripting (Reflected)", "name": "Cross Site Scripting (Reflected)", "riskcode": "3", "confidence": "2", "riskdesc": "High (Medium)",
+          "desc": "<p>Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance.</p>", "solution": "<p>Validate all input and encode output.</p>", "cweid": "79", "wascid": "8",
+          "instances": [ { "uri": "https://shop.example.com/search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E", "method": "GET", "param": "q" } ] },
+        { "pluginid": "40040", "alert": "CORS Misconfiguration", "name": "CORS Misconfiguration", "riskcode": "2", "confidence": "2", "riskdesc": "Medium (Medium)",
+          "desc": "<p>This CORS misconfiguration could allow an attacker to perform AJAX queries to the vulnerable website from a malicious page loaded by the victim's user agent.</p>", "solution": "<p>Do not reflect the Origin header with credentials allowed.</p>", "cweid": "942", "wascid": "14",
+          "instances": [ { "uri": "https://shop.example.com/api/account", "method": "GET" } ] },
+        { "pluginid": "10202", "alert": "Absence of Anti-CSRF Tokens", "name": "Absence of Anti-CSRF Tokens", "riskcode": "2", "confidence": "1", "riskdesc": "Medium (Low)",
+          "desc": "<p>No Anti-CSRF tokens were found in a HTML submission form.</p>", "solution": "<p>Use a vetted library or framework that prevents this weakness.</p>", "cweid": "352", "wascid": "9",
+          "instances": [ { "uri": "https://shop.example.com/account/email", "method": "GET" }, { "uri": "https://shop.example.com/account/password", "method": "GET" } ] },
+        { "pluginid": "10038", "alert": "Content Security Policy (CSP) Header Not Set", "name": "Content Security Policy (CSP) Header Not Set", "riskcode": "2", "confidence": "3", "riskdesc": "Medium (High)",
+          "desc": "<p>Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks.</p>", "solution": "<p>Ensure that your web server is configured to set the Content-Security-Policy header.</p>", "cweid": "693", "wascid": "15",
+          "instances": [ { "uri": "https://shop.example.com/", "method": "GET" } ] },
+        { "pluginid": "10020", "alert": "Missing Anti-clickjacking Header", "name": "Missing Anti-clickjacking Header", "riskcode": "2", "confidence": "2", "riskdesc": "Medium (Medium)",
+          "desc": "<p>The response does not include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options.</p>", "solution": "<p>Set X-Frame-Options or CSP frame-ancestors.</p>", "cweid": "1021", "wascid": "15",
+          "instances": [ { "uri": "https://shop.example.com/", "method": "GET" } ] },
+        { "pluginid": "0", "alert": "Directory Browsing", "name": "Directory Browsing", "riskcode": "2", "confidence": "2", "riskdesc": "Medium (Medium)",
+          "desc": "<p>It is possible to view the directory listing.</p>", "solution": "<p>Disable directory browsing.</p>", "cweid": "548", "wascid": "48",
+          "instances": [ { "uri": "https://shop.example.com/uploads/", "method": "GET" } ] },
+        { "pluginid": "10035", "alert": "Strict-Transport-Security Header Not Set", "name": "Strict-Transport-Security Header Not Set", "riskcode": "1", "confidence": "3", "riskdesc": "Low (High)",
+          "desc": "<p>HTTP Strict Transport Security (HSTS) is a web security policy mechanism.</p>", "solution": "<p>Ensure that your web server is configured to enforce Strict-Transport-Security.</p>", "cweid": "319", "wascid": "15",
+          "instances": [ { "uri": "https://shop.example.com/", "method": "GET" } ] },
+        { "pluginid": "10010", "alert": "Cookie No HttpOnly Flag", "name": "Cookie No HttpOnly Flag", "riskcode": "1", "confidence": "2", "riskdesc": "Low (Medium)",
+          "desc": "<p>A cookie has been set without the HttpOnly flag.</p>", "solution": "<p>Ensure that the HttpOnly flag is set for all cookies.</p>", "cweid": "1004", "wascid": "13",
+          "instances": [ { "uri": "https://shop.example.com/login", "method": "GET", "param": "sessionid" } ] },
+        { "pluginid": "10036", "alert": "Server Leaks Version Information via \"Server\" HTTP Response Header Field", "name": "Server Leaks Version Information", "riskcode": "1", "confidence": "3", "riskdesc": "Low (High)",
+          "desc": "<p>The web/application server is leaking version information via the \"Server\" HTTP response header.</p>", "solution": "<p>Configure the server to suppress the Server header or provide generic details.</p>", "cweid": "200", "wascid": "13",
+          "instances": [ { "uri": "https://shop.example.com/", "method": "GET", "evidence": "nginx/1.18.0" } ] }
+      ]
+    }
+  ]
+}

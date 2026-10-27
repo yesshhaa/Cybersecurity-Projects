@@ -1,0 +1,59 @@
+{
+  "SchemaVersion": 2,
+  "ArtifactName": "acme/storefront:1.4.2",
+  "ArtifactType": "container_image",
+  "Results": [
+    {
+      "Target": "acme/storefront:1.4.2 (debian 11.6)",
+      "Class": "os-pkgs",
+      "Type": "debian",
+      "Vulnerabilities": [
+        { "VulnerabilityID": "CVE-2023-0286", "PkgName": "openssl", "InstalledVersion": "1.1.1n-0+deb11u3", "FixedVersion": "1.1.1n-0+deb11u4", "Severity": "HIGH",
+          "Title": "openssl: X.400 address type confusion in X.509 GeneralName", "Description": "There is a type confusion vulnerability relating to X.400 address processing inside an X.509 GeneralName.", "CweIDs": ["CWE-843"],
+          "CVSS": { "nvd": { "V3Score": 7.4 } } },
+        { "VulnerabilityID": "CVE-2023-0215", "PkgName": "openssl", "InstalledVersion": "1.1.1n-0+deb11u3", "FixedVersion": "1.1.1n-0+deb11u4", "Severity": "HIGH",
+          "Title": "openssl: use-after-free following BIO_new_NDEF()", "Description": "The public API function BIO_new_NDEF is a helper function used for streaming ASN.1 data via a BIO.", "CweIDs": ["CWE-416"],
+          "CVSS": { "nvd": { "V3Score": 7.5 } } }
+      ]
+    },
+    {
+      "Target": "app/package-lock.json",
+      "Class": "lang-pkgs",
+      "Type": "npm",
+      "Vulnerabilities": [
+        { "VulnerabilityID": "CVE-2021-23337", "PkgName": "lodash", "InstalledVersion": "4.17.15", "FixedVersion": "4.17.21", "Severity": "HIGH",
+          "Title": "nodejs-lodash: command injection via template", "Description": "Lodash versions prior to 4.17.21 are vulnerable to Command Injection via the template function.", "CweIDs": ["CWE-94"],
+          "CVSS": { "nvd": { "V3Score": 7.2 } } },
+        { "VulnerabilityID": "CVE-2022-24999", "PkgName": "qs", "InstalledVersion": "6.7.0", "FixedVersion": "6.7.3", "Severity": "HIGH",
+          "Title": "express: \"qs\" prototype poisoning causes the hang of the node process", "Description": "qs before 6.10.3 allows attackers to cause a Node process hang.", "CweIDs": ["CWE-1321"],
+          "CVSS": { "nvd": { "V3Score": 7.5 } } }
+      ]
+    },
+    {
+      "Target": "app/lib/reporting.jar",
+      "Class": "lang-pkgs",
+      "Type": "jar",
+      "Vulnerabilities": [
+        { "VulnerabilityID": "CVE-2021-44228", "PkgName": "org.apache.logging.log4j:log4j-core", "InstalledVersion": "2.14.1", "FixedVersion": "2.15.0, 2.3.1, 2.12.2", "Severity": "CRITICAL",
+          "Title": "log4j-core: Remote code execution in Log4j 2.x when logs contain an attacker-controlled string value", "Description": "Apache Log4j2 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints.", "CweIDs": ["CWE-502", "CWE-400", "CWE-20"],
+          "CVSS": { "nvd": { "V3Score": 10 } } }
+      ]
+    },
+    {
+      "Target": "Dockerfile",
+      "Class": "config",
+      "Type": "dockerfile",
+      "Misconfigurations": [
+        { "Type": "Dockerfile Security Check", "ID": "DS002", "AVDID": "AVD-DS-0002", "Title": "Image user should not be 'root'", "Description": "Running containers with 'root' user can lead to a container escape situation.",
+          "Message": "Specify at least 1 USER command in Dockerfile with non-root user as argument", "Resolution": "Add 'USER <non root user name>' line to the Dockerfile", "Severity": "HIGH", "Status": "FAIL" }
+      ]
+    },
+    {
+      "Target": "app/config/settings.js",
+      "Class": "secret",
+      "Secrets": [
+        { "RuleID": "aws-access-key-id", "Category": "AWS", "Severity": "CRITICAL", "Title": "AWS Access Key ID", "StartLine": 12, "EndLine": 12, "Match": "accessKeyId: \"****************\"" }
+      ]
+    }
+  ]
+}

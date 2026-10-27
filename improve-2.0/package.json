@@ -1,0 +1,11 @@
+{
+  "name": "improve-2.0",
+  "version": "2.0.0",
+  "description": "Security Fix Navigator: turn scanner output into a ranked, verifiable fix plan",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node --test"
+  },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}
